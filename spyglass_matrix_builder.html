@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Matrix Builder — Spyglass Partners</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/font.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+:root{
+  --bg:#0A1F3D; --paper:#0F2847; --line:#1E3A5A; --line-soft:#162F4A;
+  --ink-4:#2A4A6A; --ink-3:#8FA3B8; --ink-2:#C8D9E8; --ink:#EEF4FB;
+  --green:#10B981; --green-d:#059669; --green-on:#4ADE80;
+  --navy:#0A1F3D; --navy-2:#1A3052; --navy-mid:#4B6177;
+  --navy-soft:#8FA3B8; --navy-on:#93C5FD;
+  --card:#132847; --card-border:#1F3D5C;
+  --sans:'Geist',-apple-system,'Segoe UI',sans-serif;
+  --mono:'Geist Mono','Geist',ui-monospace,monospace;
+  --r-1:4px; --r-2:8px; --r-3:12px; --r-4:20px;
+  --shadow:0 1px 3px rgba(0,0,0,.3),0 4px 20px rgba(0,0,0,.25);
+}
+
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;}
+
+/* NAV */
+nav{
+  height:52px;background:rgba(10,31,61,.95);border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 32px;position:sticky;top:0;z-index:99;
+  backdrop-filter:blur(8px);
+}
+.nav-mark{
+  display:flex;align-items:center;gap:10px;
+}
+.nav-wordmark{font-family:var(--sans);font-size:17px;font-weight:700;letter-spacing:-0.02em;color:var(--ink);}
+.nav-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(16,185,129,.2);margin-left:2px;}
+.nav-meta{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--ink-3);letter-spacing:.06em;text-transform:uppercase;}
+.nav-context{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--ink-3);letter-spacing:.06em;text-transform:uppercase;}
+
+/* PAGE */
+.page{max-width:720px;margin:0 auto;padding:40px 24px 100px;}
+
+/* HERO */
+.hero{margin-bottom:40px;}
+.hero-eyebrow{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin-bottom:10px;}
+.hero-headline{font-size:38px;font-weight:800;letter-spacing:-.05em;line-height:.92;color:var(--ink);margin-bottom:8px;}
+.hero-sub{font-size:15px;font-weight:400;color:var(--ink-3);letter-spacing:-.01em;}
+
+/* API BANNER */
+.api-banner{
+  background:var(--card);border:1px solid var(--card-border);border-radius:var(--r-4);
+  padding:20px 24px;margin-bottom:32px;
+}
+.api-banner-label{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin-bottom:8px;display:block;}
+.api-input{
+  width:100%;padding:10px 14px;border:1px solid var(--card-border);border-radius:var(--r-2);
+  font-family:var(--mono);font-size:13px;color:var(--ink);background:var(--navy-2);
+  outline:none;transition:border-color .15s;
+}
+.api-input::placeholder{color:var(--navy-soft);}
+.api-input:focus{border-color:var(--navy-on);background:var(--navy-2);}
+.api-note{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;color:var(--navy-mid);margin-top:8px;}
+
+/* STEPS */
+.steps{display:flex;align-items:center;margin-bottom:36px;}
+.step-item{display:flex;align-items:center;flex:1;}
+.step-item:last-child{flex:none;}
+.step-inner{display:flex;flex-direction:column;align-items:center;gap:5px;}
+.step-dot{
+  width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:11px;font-weight:600;flex-shrink:0;transition:all .2s;
+}
+.s-done{background:var(--green);color:#fff;border:2px solid var(--green);}
+.s-active{background:var(--ink);color:var(--navy);border:2px solid var(--ink);}
+.s-pending{background:transparent;color:var(--ink-3);border:2px solid var(--card-border);}
+.step-lbl{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;}
+.sl-done{color:var(--green);}
+.sl-active{color:var(--ink);}
+.sl-pending{color:var(--ink-3);}
+.step-line{flex:1;height:1px;margin:0 8px 18px;transition:background .2s;}
+.sl-line-done{background:var(--green);}
+.sl-line-pend{background:var(--card-border);}
+
+/* SECTION */
+.section-eyebrow{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin-bottom:6px;}
+.section-title{font-size:26px;font-weight:700;letter-spacing:-.035em;color:var(--ink);margin-bottom:4px;}
+
+/* CARD */
+.card{background:var(--card);border:1px solid var(--card-border);border-radius:var(--r-4);padding:24px 28px;margin-bottom:14px;box-shadow:var(--shadow);}
+.card-alt{background:var(--navy-2);}
+.card-title{font-size:17px;font-weight:700;letter-spacing:-.02em;color:var(--ink);margin-bottom:3px;}
+.card-sub{font-size:13px;color:var(--ink-3);margin-bottom:18px;font-family:var(--mono);letter-spacing:.02em;}
+
+/* FORM */
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.field{margin-bottom:14px;}
+.field:last-child{margin-bottom:0;}
+.lbl{display:block;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--navy-soft);margin-bottom:7px;}
+input[type=text],input[type=email],textarea{
+  width:100%;padding:11px 14px;border:1px solid var(--card-border);border-radius:var(--r-2);
+  font-size:14px;font-family:var(--sans);color:var(--ink);background:var(--navy-2);
+  outline:none;resize:vertical;line-height:1.5;letter-spacing:-.01em;
+  transition:border-color .15s,box-shadow .15s;font-weight:500;
+}
+input::placeholder,textarea::placeholder{color:var(--navy-mid);}
+input:focus,textarea:focus{border-color:var(--navy-on);background:var(--navy-2);box-shadow:0 0 0 3px rgba(147,197,253,.1);}
+textarea{min-height:76px;}
+
+/* JD DROP */
+.jd-drop{
+  border:1px dashed var(--card-border);border-radius:var(--r-3);padding:24px;
+  text-align:center;cursor:pointer;background:var(--navy-2);margin-bottom:10px;
+  transition:border-color .15s,background .15s;
+}
+.jd-drop:hover{border-color:var(--navy-soft);background:var(--navy-2);}
+.jd-drop-icon{font-size:24px;margin-bottom:6px;}
+.jd-drop-t{font-size:14px;font-weight:600;color:var(--ink-2);letter-spacing:-.01em;margin-bottom:2px;}
+.jd-drop-s{font-family:var(--mono);font-size:11px;color:var(--ink-3);letter-spacing:.04em;}
+.jd-loaded{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 16px;background:var(--navy-2);border:1px solid var(--card-border);
+  border-radius:var(--r-2);margin-bottom:10px;
+}
+.jd-loaded-t{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--green);letter-spacing:.06em;text-transform:uppercase;}
+.jd-loaded-s{font-family:var(--mono);font-size:10px;color:var(--ink-3);margin-top:2px;letter-spacing:.04em;}
+.jd-clear{background:none;border:none;color:var(--ink-3);cursor:pointer;font-size:18px;line-height:1;padding:0 4px;}
+.jd-clear:hover{color:var(--ink);}
+
+/* BUTTONS */
+.btn-primary{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:13px 28px;background:var(--navy-on);color:var(--navy);
+  border:none;border-radius:var(--r-3);font-family:var(--sans);
+  font-size:14px;font-weight:700;letter-spacing:-.01em;cursor:pointer;
+  transition:transform .15s,box-shadow .15s,background .15s;
+}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(147,197,253,.25);background:#bae6fd;}
+.btn-primary:active{transform:none;box-shadow:none;}
+.btn-primary:disabled{opacity:.35;cursor:not-allowed;transform:none;box-shadow:none;}
+.btn-secondary{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:11px 22px;background:transparent;color:var(--ink-3);
+  border:1px solid var(--card-border);border-radius:var(--r-3);
+  font-family:var(--sans);font-size:14px;font-weight:500;
+  cursor:pointer;letter-spacing:-.01em;transition:border-color .15s,color .15s;
+}
+.btn-secondary:hover{border-color:var(--navy-soft);color:var(--ink);}
+.btn-row{display:flex;gap:12px;margin-top:6px;flex-wrap:wrap;}
+
+/* GENERATING */
+.generating{text-align:center;padding:80px 0;}
+.spinner{
+  width:44px;height:44px;margin:0 auto 24px;border-radius:50%;
+  border:2.5px solid var(--card-border);border-top-color:var(--navy-on);
+  animation:spin .7s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.gen-title{font-size:26px;font-weight:700;letter-spacing:-.035em;color:var(--ink);margin-bottom:8px;}
+.gen-sub{font-family:var(--mono);font-size:12px;color:var(--ink-3);letter-spacing:.04em;}
+
+/* REVIEW */
+.review-hd{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;gap:16px;}
+.q-block{padding:16px;border:1px solid var(--card-border);border-radius:var(--r-3);margin-bottom:10px;background:var(--navy-2);}
+.q-num{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--ink-3);margin-bottom:10px;letter-spacing:.06em;text-transform:uppercase;}
+.probe-row{display:flex;gap:10px;align-items:flex-start;margin-top:10px;}
+.probe-lbl{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--ink-3);padding-top:12px;white-space:nowrap;text-transform:uppercase;letter-spacing:.06em;flex-shrink:0;}
+.num-row{display:flex;gap:10px;margin-bottom:10px;align-items:center;}
+.num{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--ink-3);width:20px;text-align:center;flex-shrink:0;}
+.chip{
+  display:inline-block;padding:4px 12px;
+  background:var(--navy-2);border:1px solid var(--card-border);
+  border-radius:var(--r-1);font-family:var(--mono);
+  font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;
+  color:var(--navy-on);margin-right:6px;margin-bottom:6px;
+}
+
+/* ACTIONS */
+.success-strip{
+  background:linear-gradient(135deg,var(--navy-2) 0%,var(--card) 100%);
+  color:var(--ink);
+  border-radius:var(--r-4);padding:20px 28px;margin-bottom:24px;
+  display:flex;align-items:center;gap:14px;
+  border:1px solid var(--card-border);
+  border-left:3px solid var(--green);
+}
+.success-main{font-size:22px;font-weight:700;letter-spacing:-.03em;}
+.success-sub{font-family:var(--mono);font-size:11px;color:var(--navy-soft);margin-top:3px;letter-spacing:.04em;}
+
+.summary-card{border:1px solid var(--card-border);border-radius:var(--r-4);overflow:hidden;margin-bottom:24px;box-shadow:var(--shadow);}
+.summary-head{padding:12px 22px;background:var(--navy-2);border-bottom:1px solid var(--card-border);}
+.summary-head-lbl{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--navy-soft);letter-spacing:.08em;text-transform:uppercase;}
+.summary-row{display:flex;justify-content:space-between;align-items:flex-start;padding:11px 22px;border-bottom:1px solid var(--line);font-size:14px;gap:16px;background:var(--card);}
+.summary-row:last-child{border-bottom:none;}
+.s-key{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);white-space:nowrap;padding-top:1px;}
+.s-val{color:var(--ink);text-align:right;font-weight:500;font-size:14px;letter-spacing:-.01em;}
+
+.act-card{
+  display:flex;align-items:center;gap:16px;padding:16px 22px;
+  background:var(--card);border:1px solid var(--card-border);border-radius:var(--r-4);
+  cursor:pointer;margin-bottom:10px;text-decoration:none;color:inherit;
+  box-shadow:var(--shadow);transition:transform .15s,border-color .15s,box-shadow .15s;
+}
+.act-card:hover{transform:translateX(4px);border-color:var(--navy-soft);box-shadow:0 4px 24px rgba(0,0,0,.3);}
+.act-card.done{background:var(--navy-2);border-color:var(--green);transform:none;}
+.act-icon{
+  width:40px;height:40px;border-radius:var(--r-2);background:var(--navy-2);
+  border:1px solid var(--card-border);display:flex;align-items:center;
+  justify-content:center;font-size:18px;flex-shrink:0;
+}
+.act-title{font-size:15px;font-weight:700;letter-spacing:-.02em;color:var(--ink);margin-bottom:2px;}
+.act-sub{font-family:var(--mono);font-size:11px;color:var(--ink-3);letter-spacing:.03em;}
+.act-arrow{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--ink-3);margin-left:auto;flex-shrink:0;transition:transform .15s;}
+.act-card:hover .act-arrow{transform:translateX(4px);}
+.act-card.done .act-arrow{color:var(--green);}
+
+.divider{border:none;border-top:1px solid var(--card-border);margin:24px 0;}
+.err{font-family:var(--mono);font-size:12px;color:#F87171;margin-bottom:12px;letter-spacing:.03em;}
+.hidden{display:none!important;}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-mark">
+    <span class="nav-wordmark">Spyglass Partners</span>
+    <div class="nav-dot"></div>
+  </div>
+  <span class="nav-context" id="nav-ctx"></span>
+</nav>
+
+<div class="page">
+
+  <div class="hero">
+    <div class="hero-eyebrow">Matrix Builder · v1.0</div>
+    <div class="hero-headline">JOB INTAKE FORM</div>
+    <div class="hero-sub">From raw call notes to approved matrix in under 5 minutes.</div>
+  </div>
+
+  <div class="api-banner" id="api-banner">
+    <span class="api-banner-label">Anthropic API Key</span>
+    <input class="api-input" type="text" id="api-key-input" placeholder="sk-ant-api03-..." autocomplete="off" spellcheck="false"/>
+    <div class="api-note">console.anthropic.com → API Keys · Saved locally · ~$0.01 per matrix</div>
+  </div>
+
+  <div class="steps" id="steps"></div>
+
+  <!-- INTAKE -->
+  <div id="step-intake">
+    <div class="row2">
+      <div class="field">
+        <label class="lbl">Client / Company *</label>
+        <input type="text" id="clientName" placeholder="ProCare HR"/>
+      </div>
+      <div class="field">
+        <label class="lbl">Role Title *</label>
+        <input type="text" id="roleName" placeholder="VP of HR"/>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Full Job Description</div>
+      <div class="card-sub">Upload .docx / .txt or paste below — AI merges this with call notes</div>
+      <div id="jd-drop" class="jd-drop" onclick="document.getElementById('jd-file').click()">
+        <div class="jd-drop-icon">📎</div>
+        <div class="jd-drop-t">Drop .docx or .txt here</div>
+        <div class="jd-drop-s">Click to browse · or paste below</div>
+      </div>
+      <div id="jd-loaded" class="jd-loaded hidden">
+        <div><div class="jd-loaded-t">✓ JD Loaded</div><div class="jd-loaded-s" id="jd-chars"></div></div>
+        <button class="jd-clear" onclick="clearJD()">×</button>
+      </div>
+      <input type="file" id="jd-file" accept=".docx,.txt,.md" style="display:none" onchange="handleFile(this)"/>
+      <textarea id="fullJD" placeholder="Or paste the full job description here..." oninput="onPaste()"></textarea>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Call Notes</div>
+      <div class="card-sub">Insider intel — what the JD doesn't capture</div>
+      <div class="field">
+        <label class="lbl">Must-haves (client's actual words)</label>
+        <textarea id="mustHaves" placeholder="Absolute non-negotiables from the call..."></textarea>
+      </div>
+      <div class="field">
+        <label class="lbl">Nice-to-haves</label>
+        <textarea id="niceToHaves" placeholder="Strong plusses, not dealbreakers..." style="min-height:60px"></textarea>
+      </div>
+      <div class="field">
+        <label class="lbl">Culture / personality signals</label>
+        <input type="text" id="cultureSignals" placeholder="Tone, working style, red flags mentioned..."/>
+      </div>
+      <div class="field">
+        <label class="lbl">Comp / timeline / location</label>
+        <input type="text" id="compTimeline" placeholder="$180–200k, remote, contract-to-hire, ASAP..."/>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Director Settings</div>
+      <div class="card-sub">Saved in your browser — set once.</div>
+      <div class="row2" style="margin-bottom:0">
+        <div class="field" style="margin-bottom:0">
+          <label class="lbl">Name</label>
+          <input type="text" id="directorName" placeholder="First name"/>
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label class="lbl">Email</label>
+          <input type="email" id="directorEmail" placeholder="director@spyglasspartners.com"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="err hidden" id="intake-err"></div>
+    <button class="btn-primary" onclick="generate()">Generate Matrix →</button>
+  </div>
+
+  <!-- GENERATING -->
+  <div id="step-generating" class="hidden">
+    <div class="generating">
+      <div class="spinner"></div>
+      <div class="gen-title" id="gen-msg">Reading your JD...</div>
+      <div class="gen-sub" id="gen-sub"></div>
+    </div>
+  </div>
+
+  <!-- REVIEW -->
+  <div id="step-review" class="hidden">
+    <div class="review-hd">
+      <div>
+        <div class="section-eyebrow">Step 03 · Review</div>
+        <div class="section-title">Review Your Matrix</div>
+      </div>
+      <button class="btn-secondary" onclick="goTo(0)" style="font-size:13px;padding:9px 16px">← Edit Inputs</button>
+    </div>
+
+    <div class="card">
+      <label class="lbl">Role Summary</label>
+      <textarea id="r-summary" style="min-height:88px"></textarea>
+    </div>
+    <div class="card">
+      <div class="lbl" style="margin-bottom:14px">Must-Haves</div>
+      <div id="r-mh"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+      <div class="card" style="margin-bottom:0">
+        <div class="lbl" style="margin-bottom:14px">Nice-to-Haves</div>
+        <div id="r-nth"></div>
+      </div>
+      <div class="card" style="margin-bottom:0">
+        <div class="lbl" style="margin-bottom:14px">Key Attributes</div>
+        <div id="r-attrs"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="lbl" style="margin-bottom:16px">Screening Questions</div>
+      <div id="r-qs"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="goTo(3)">Approve & Send →</button>
+      <button class="btn-secondary" onclick="resetAI()">↺ Reset to AI Draft</button>
+    </div>
+  </div>
+
+  <!-- ACTIONS -->
+  <div id="step-actions" class="hidden">
+    <div class="success-strip">
+      <div style="font-size:22px">✓</div>
+      <div>
+        <div class="success-main">Matrix Approved</div>
+        <div class="success-sub" id="act-sub"></div>
+      </div>
+    </div>
+
+    <div class="summary-card">
+      <div class="summary-head"><div class="summary-head-lbl">Summary</div></div>
+      <div class="summary-row"><span class="s-key">Client</span><span class="s-val" id="s-cn"></span></div>
+      <div class="summary-row"><span class="s-key">Role</span><span class="s-val" id="s-rn"></span></div>
+      <div class="summary-row"><span class="s-key">Date</span><span class="s-val" id="s-dt"></span></div>
+      <div class="summary-row"><span class="s-key">Must-Haves</span><span class="s-val" id="s-mh"></span></div>
+      <div class="summary-row"><span class="s-key">Attributes</span><span class="s-val" id="s-at"></span></div>
+    </div>
+
+    <a id="act-email" class="act-card" href="#">
+      <div class="act-icon">📧</div>
+      <div style="flex:1"><div class="act-title" id="act-email-t">Email Director</div><div class="act-sub">Opens mail client · full matrix + tracker row in body</div></div>
+      <div class="act-arrow">→</div>
+    </a>
+    <div class="act-card" id="act-tracker" onclick="doCopy('tracker')">
+      <div class="act-icon">📊</div>
+      <div style="flex:1"><div class="act-title">Copy Tracker Row</div><div class="act-sub">Tab-separated · paste into Excel</div></div>
+      <div class="act-arrow" id="arr-tracker">→</div>
+    </div>
+    <div class="act-card" id="act-jd" onclick="doCopy('jd')">
+      <div class="act-icon">💾</div>
+      <div style="flex:1"><div class="act-title">Copy JobDiva Text</div><div class="act-sub">Formatted JD ready to paste into job order</div></div>
+      <div class="act-arrow" id="arr-jd">→</div>
+    </div>
+    <div class="act-card" id="act-em2" onclick="doCopy('email')">
+      <div class="act-icon">📋</div>
+      <div style="flex:1"><div class="act-title">Copy Full Email</div><div class="act-sub">Backup if mailto didn't open</div></div>
+      <div class="act-arrow" id="arr-em2">→</div>
+    </div>
+
+    <hr class="divider"/>
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="goTo(2)">← Back to Review</button>
+      <button class="btn-secondary" onclick="newRole()">+ New Role</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let step=0,ai=null,ed=null;
+const today=new Date().toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"});
+
+window.addEventListener("load",()=>{
+  const s=JSON.parse(localStorage.getItem("sg")||"{}");
+  if(s.dn) document.getElementById("directorName").value=s.dn;
+  if(s.de) document.getElementById("directorEmail").value=s.de;
+  if(s.ak) document.getElementById("api-key-input").value=s.ak;
+  ["directorName","directorEmail"].forEach(id=>document.getElementById(id).addEventListener("input",save));
+  document.getElementById("api-key-input").addEventListener("input",save);
+  const drop=document.getElementById("jd-drop");
+  drop.addEventListener("dragover",e=>{e.preventDefault();drop.style.borderColor="var(--navy-soft)";});
+  drop.addEventListener("dragleave",()=>{drop.style.borderColor="";});
+  drop.addEventListener("drop",e=>{e.preventDefault();drop.style.borderColor="";handleFile({files:e.dataTransfer.files});});
+  renderSteps();
+});
+
+function save(){
+  localStorage.setItem("sg",JSON.stringify({
+    dn:document.getElementById("directorName").value,
+    de:document.getElementById("directorEmail").value,
+    ak:document.getElementById("api-key-input").value,
+  }));
+}
+
+function renderSteps(){
+  const labels=["Intake","Generating","Review","Output"];
+  const c=document.getElementById("steps"); c.innerHTML="";
+  labels.forEach((s,i)=>{
+    const dc=i<step?"s-done":i===step?"s-active":"s-pending";
+    const lc=i<step?"sl-done":i===step?"sl-active":"sl-pending";
+    const el=document.createElement("div"); el.className="step-item";
+    el.innerHTML=`<div class="step-inner"><div class="step-dot ${dc}">${i<step?"✓":i+1}</div><span class="step-lbl ${lc}">${s}</span></div>${i<3?`<div class="step-line ${i<step?"sl-line-done":"sl-line-pend"}"></div>`:""}`;
+    c.appendChild(el);
+  });
+}
+
+function goTo(n){
+  step=n; renderSteps();
+  ["intake","generating","review","actions"].forEach((id,i)=>{
+    document.getElementById(`step-${id}`).classList.toggle("hidden",i!==n);
+  });
+  if(n===2)renderReview();
+  if(n===3)renderActions();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function handleFile(inp){
+  const f=inp.files[0]; if(!f) return;
+  const ext=f.name.split(".").pop().toLowerCase();
+  if(ext==="txt"||ext==="md"){const r=new FileReader();r.onload=e=>setJD(e.target.result);r.readAsText(f);}
+  else if(ext==="docx"){
+    const r=new FileReader();
+    r.onload=async e=>{
+      try{const m=await import("https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js");const res=await m.extractRawText({arrayBuffer:e.target.result});setJD(res.value);}
+      catch{alert("Couldn't read .docx — paste the text instead.");}
+    };
+    r.readAsArrayBuffer(f);
+  }
+}
+
+function setJD(t){
+  document.getElementById("fullJD").value=t;
+  document.getElementById("jd-drop").classList.add("hidden");
+  document.getElementById("jd-loaded").classList.remove("hidden");
+  document.getElementById("jd-chars").textContent=t.length.toLocaleString()+" characters";
+}
+function clearJD(){
+  document.getElementById("fullJD").value="";
+  document.getElementById("jd-drop").classList.remove("hidden");
+  document.getElementById("jd-loaded").classList.add("hidden");
+}
+function onPaste(){const v=document.getElementById("fullJD").value;if(v.length>100)setJD(v);else clearJD();}
+
+async function generate(){
+  const cn=document.getElementById("clientName").value.trim();
+  const rn=document.getElementById("roleName").value.trim();
+  const jd=document.getElementById("fullJD").value.trim();
+  const mh=document.getElementById("mustHaves").value.trim();
+  const nth=document.getElementById("niceToHaves").value.trim();
+  const cs=document.getElementById("cultureSignals").value.trim();
+  const ct=document.getElementById("compTimeline").value.trim();
+  const ak=document.getElementById("api-key-input").value.trim();
+  const err=document.getElementById("intake-err");
+  if(!cn||!rn||(!jd&&!mh)){err.textContent="Need client, role, and at least a JD or must-haves.";err.classList.remove("hidden");return;}
+  if(!ak){err.textContent="Add your Anthropic API key at the top.";err.classList.remove("hidden");return;}
+  err.classList.add("hidden");
+  document.getElementById("nav-ctx").textContent=`${cn} · ${rn}`;
+  document.getElementById("gen-sub").textContent=`${rn} · ${cn}`;
+  goTo(1);
+  const msgs=["Reading your JD...","Merging with call notes...","Writing screening questions...","Finalizing..."];
+  let mi=0; const iv=setInterval(()=>{mi=(mi+1)%msgs.length;document.getElementById("gen-msg").textContent=msgs[mi];},1900);
+  try{
+    const prompt=`You are a senior recruiting consultant at Spyglass Partners.\n\nMerge these inputs into a polished job matrix:\n1. OFFICIAL JD — formal language, qualifications, structure\n2. CALL NOTES — real priorities, culture signals, what makes a winning candidate\n\nCLIENT: ${cn}\nROLE: ${rn}\n${jd.length>50?`\nOFFICIAL JD:\n---\n${jd.slice(0,3500)}\n---`:""}\nMust-haves: ${mh||"not provided"}\nNice-to-haves: ${nth||"not provided"}\nCulture: ${cs||"not provided"}\nComp/timeline: ${ct||"not provided"}\n\nReturn ONLY valid JSON:\n{"jobSummary":"2-3 sentence overview","mustHaves":["","","","",""],"niceToHaves":["","",""],"keyAttributes":["","","",""],"screeningQuestions":[{"question":"","probeFor":""},{"question":"","probeFor":""},{"question":"","probeFor":""},{"question":"","probeFor":""},{"question":"","probeFor":""}]}`;
+    const res=await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",
+      headers:{"Content-Type":"application/json","x-api-key":ak,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,messages:[{role:"user",content:prompt}]}),
+    });
+    const data=await res.json();
+    if(data.error)throw new Error(data.error.message);
+    ai=JSON.parse(data.content.map(i=>i.text||"").join("").replace(/```json|```/g,"").trim());
+    ed=JSON.parse(JSON.stringify(ai));
+    clearInterval(iv); goTo(2);
+  }catch(e){clearInterval(iv);goTo(0);document.getElementById("intake-err").textContent="Error: "+e.message;document.getElementById("intake-err").classList.remove("hidden");}
+}
+
+function renderReview(){
+  const m=ed;
+  const rs=document.getElementById("r-summary"); rs.value=m.jobSummary; rs.oninput=function(){ed.jobSummary=this.value;};
+  const mhEl=document.getElementById("r-mh"); mhEl.innerHTML="";
+  m.mustHaves.forEach((h,i)=>{
+    const row=document.createElement("div"); row.className="num-row";
+    row.innerHTML=`<span class="num">${i+1}</span>`;
+    const inp=document.createElement("input"); inp.type="text"; inp.value=h; inp.oninput=function(){ed.mustHaves[i]=this.value;};
+    row.appendChild(inp); mhEl.appendChild(row);
+  });
+  const nEl=document.getElementById("r-nth"); nEl.innerHTML="";
+  m.niceToHaves.forEach((h,i)=>{const inp=document.createElement("input");inp.type="text";inp.value=h;inp.style.marginBottom="10px";inp.oninput=function(){ed.niceToHaves[i]=this.value;};nEl.appendChild(inp);});
+  document.getElementById("r-attrs").innerHTML=m.keyAttributes.map(a=>`<span class="chip">${a}</span>`).join("");
+  const qEl=document.getElementById("r-qs"); qEl.innerHTML="";
+  m.screeningQuestions.forEach((q,i)=>{
+    const b=document.createElement("div"); b.className="q-block";
+    b.innerHTML=`<div class="q-num">Question · ${String(i+1).padStart(2,"0")}</div>`;
+    const ta=document.createElement("textarea"); ta.value=q.question; ta.style.minHeight="62px"; ta.oninput=function(){ed.screeningQuestions[i].question=this.value;};
+    const pr=document.createElement("div"); pr.className="probe-row";
+    const pl=document.createElement("span"); pl.className="probe-lbl"; pl.textContent="Probe for";
+    const pi=document.createElement("input"); pi.type="text"; pi.value=q.probeFor; pi.oninput=function(){ed.screeningQuestions[i].probeFor=this.value;};
+    pr.appendChild(pl); pr.appendChild(pi); b.appendChild(ta); b.appendChild(pr); qEl.appendChild(b);
+  });
+}
+
+function resetAI(){ed=JSON.parse(JSON.stringify(ai));renderReview();}
+
+function renderActions(){
+  const cn=v("clientName"), rn=v("roleName"), dn=v("directorName"), de=v("directorEmail");
+  document.getElementById("act-sub").textContent=`${rn} · ${cn} · ${today}`;
+  document.getElementById("s-cn").textContent=cn;
+  document.getElementById("s-rn").textContent=rn;
+  document.getElementById("s-dt").textContent=today;
+  document.getElementById("s-mh").textContent=`${ed.mustHaves.length} items`;
+  document.getElementById("s-at").innerHTML=ed.keyAttributes.map(a=>`<span class="chip">${a}</span>`).join("");
+  document.getElementById("act-email-t").textContent=`Email ${dn||"Director of Recruiting"}`;
+  document.getElementById("act-email").href=`mailto:${de}?subject=${encodeURIComponent(`Matrix Ready: ${rn} — ${cn}`)}&body=${encodeURIComponent(buildEmail())}`;
+}
+
+const v=id=>document.getElementById(id).value.trim();
+
+function buildEmail(){
+  const cn=v("clientName"),rn=v("roleName"),dn=v("directorName"),ct=v("compTimeline"),m=ed;
+  return `Hi ${dn||"there"},\n\nNew matrix ready — ${rn} at ${cn} (${today}).\n\n────────────────────────\nROLE SUMMARY\n────────────────────────\n${m.jobSummary}\n\n────────────────────────\nMUST-HAVES\n────────────────────────\n${m.mustHaves.map((h,i)=>`${i+1}. ${h}`).join("\n")}\n\n────────────────────────\nKEY ATTRIBUTES\n────────────────────────\n${m.keyAttributes.join(" · ")}\n\n────────────────────────\nSCREENING QUESTIONS\n────────────────────────\n${m.screeningQuestions.map((q,i)=>`Q${i+1}. ${q.question}\n   → Probe for: ${q.probeFor}`).join("\n\n")}\n\n────────────────────────\nTRACKER ROW\n────────────────────────\n${cn}\t${rn}\t${today}\tSpyglass Partners\tPending Review\t\n\n— Marcos`;
+}
+function buildTracker(){return `${v("clientName")}\t${v("roleName")}\t${today}\tSpyglass Partners\tPending Review\t`;}
+function buildJD(){const cn=v("clientName"),rn=v("roleName"),ct=v("compTimeline"),m=ed;return `${rn} — ${cn}\n\n${m.jobSummary}\n\nMUST-HAVES\n${m.mustHaves.map(h=>`• ${h}`).join("\n")}\n\nPREFERRED\n${m.niceToHaves.map(h=>`• ${h}`).join("\n")}\n\nKEY ATTRIBUTES\n${m.keyAttributes.map(a=>`• ${a}`).join("\n")}${ct?`\n\nCOMP / TIMELINE\n${ct}`:""}` ;}
+
+function doCopy(type){
+  const map={tracker:["act-tracker","arr-tracker",buildTracker()],jd:["act-jd","arr-jd",buildJD()],email:["act-em2","arr-em2",buildEmail()]};
+  const [cardId,arrId,text]=map[type];
+  navigator.clipboard.writeText(text).then(()=>{
+    const card=document.getElementById(cardId),arr=document.getElementById(arrId);
+    card.classList.add("done"); arr.textContent="Copied ✓";
+    setTimeout(()=>{card.classList.remove("done");arr.textContent="→";},2500);
+  });
+}
+
+function newRole(){
+  ["clientName","roleName","fullJD","mustHaves","niceToHaves","cultureSignals","compTimeline"].forEach(id=>document.getElementById(id).value="");
+  clearJD(); ai=null; ed=null;
+  document.getElementById("nav-ctx").textContent="";
+  document.getElementById("intake-err").classList.add("hidden");
+  goTo(0);
+}
+</script>
+</body>
+</html>
