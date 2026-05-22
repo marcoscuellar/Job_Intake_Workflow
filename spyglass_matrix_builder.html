@@ -231,9 +231,48 @@ textarea{min-height:76px;}
 .divider{border:none;border-top:1px solid var(--line);margin:24px 0;}
 .err{font-family:var(--mono);font-size:12px;color:#DC2626;margin-bottom:12px;letter-spacing:.03em;}
 .hidden{display:none!important;}
+
+/* LOGIN */
+#login-screen{
+  position:fixed;inset:0;background:var(--paper);
+  display:flex;align-items:center;justify-content:center;z-index:1000;
+}
+.login-box{
+  background:var(--navy);border:1px solid rgba(255,255,255,.07);
+  border-radius:var(--r-4);padding:48px 40px;width:100%;max-width:400px;
+  box-shadow:var(--navy-shadow);text-align:center;
+}
+.login-wordmark{font-family:var(--sans);font-size:22px;font-weight:800;letter-spacing:-.03em;color:#fff;margin-bottom:4px;}
+.login-sub{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--navy-soft);margin-bottom:32px;}
+.login-box input[type=password]{
+  width:100%;padding:12px 16px;border:1px solid rgba(255,255,255,.12);border-radius:var(--r-2);
+  font-size:15px;font-family:var(--sans);color:#fff;background:var(--navy-2);
+  outline:none;text-align:center;letter-spacing:.08em;margin-bottom:12px;
+  transition:border-color .15s;
+}
+.login-box input[type=password]:focus{border-color:var(--navy-on);}
+.login-box input::placeholder{color:var(--navy-mid);letter-spacing:.04em;}
+.login-btn{
+  width:100%;padding:13px;background:#fff;color:var(--navy);
+  border:none;border-radius:var(--r-3);font-family:var(--sans);
+  font-size:14px;font-weight:700;cursor:pointer;letter-spacing:-.01em;
+  transition:opacity .15s;
+}
+.login-btn:hover{opacity:.88;}
+.login-err{font-family:var(--mono);font-size:11px;color:#F87171;margin-bottom:12px;letter-spacing:.04em;}
 </style>
 </head>
 <body>
+
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-wordmark">Spyglass Partners</div>
+    <div class="login-sub">Matrix Builder</div>
+    <input type="password" id="login-pw" placeholder="Password" onkeydown="if(event.key==='Enter')checkLogin()"/>
+    <div class="login-err hidden" id="login-err">Incorrect password</div>
+    <button class="login-btn" onclick="checkLogin()">Enter →</button>
+  </div>
+</div>
 
 <nav>
   <div class="nav-mark">
@@ -425,6 +464,17 @@ textarea{min-height:76px;}
 </div>
 
 <script>
+if(localStorage.getItem('sg_auth')==='1'){document.getElementById('login-screen').classList.add('hidden');}
+function checkLogin(){
+  if(document.getElementById('login-pw').value==='spyglass2026!'){
+    localStorage.setItem('sg_auth','1');
+    document.getElementById('login-screen').classList.add('hidden');
+  } else {
+    document.getElementById('login-err').classList.remove('hidden');
+    document.getElementById('login-pw').value='';
+  }
+}
+
 let step=0,ai=null,ed=null;
 const today=new Date().toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"});
 
